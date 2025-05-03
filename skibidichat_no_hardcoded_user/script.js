@@ -11,7 +11,7 @@ function login() {
 
   // Simulated user lookup via Supabase or external API (placeholder)
   if (!USERS[username]) {
-    document.getElementById("error-message").innerText = "Sorry, But you do not have access!";
+    document.getElementById("error-message").innerText = "Your Email or Password is incorrect.";
     return;
   }
 
