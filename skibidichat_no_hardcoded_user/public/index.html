@@ -1,3 +1,102 @@
-<!-- Entry point: login or redirect -->
+<!-- Part 1: public/index.html -->
+
 <!DOCTYPE html>
-<html><head><title>Login</title></head><body><h1>Login Page</h1></body></html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Skibidi Xhat</title>
+  <link rel="stylesheet" href="../styles/main.css" />
+</head>
+<body>
+  <div id="login-box">
+    <h1>Login to Skibidi Xhat</h1>
+    <input type="email" id="email" placeholder="Email" />
+    <input type="password" id="password" placeholder="Password" />
+    <button onclick="login()">Login</button>
+    <p id="error-msg"></p>
+  </div>
+  <script src="../supabase/config.js"></script>
+  <script src="../scripts/app.js"></script>
+</body>
+</html>
+
+<!-- Part 2: styles/main.css -->
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background-color: #1e1e2f;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+#login-box {
+  background: #2a2a40;
+  padding: 2em;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+  width: 300px;
+  text-align: center;
+}
+
+input {
+  width: 90%;
+  padding: 10px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 4px;
+}
+
+button {
+  background-color: #7289da;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#error-msg {
+  color: #ff4d4f;
+  font-size: 0.9em;
+  margin-top: 10px;
+}
+
+<!-- Part 3: scripts/app.js -->
+
+async function login() {
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  const { error, data } = await supabase.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error) {
+    document.getElementById('error-msg').innerText = `Error: ${error.message}`;
+  } else {
+    window.location.href = '/dashboard.html';
+  }
+}
+
+// Announcement function (admin only)
+async function postAnnouncement(message) {
+  const { data, error, status } = await supabase.from('announcements').insert([{ message }]);
+  if (error) {
+    console.error(`Error (${status}): ${error.message}`);
+  } else {
+    console.log('Announcement posted:', data);
+  }
+}
+
+<!-- Part 4: supabase/config.js -->
+
+const { createClient } = supabase;
+const supabaseUrl = "https://your-project-id.supabase.co";
+const supabaseKey = "your-anon-key";
+const supabase = createClient(supabaseUrl, supabaseKey);
